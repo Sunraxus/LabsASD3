@@ -28,29 +28,47 @@ stats& BubbleSort(vector<int>& vector) {
 	return statistics;
 }
 
+stats& QuickSort(vector<int>& vec, int start, int end) {
+    stats statistics;
 
-int Partition(vector<int>& vec, int start, int end) {
+    int i = start;
+    int j = end;
+    int middle = vec[(start + end) / 2];
 
-	int supp_elem = end;
-	int j = start;
-	for (int i = start; i < end; ++i) {
-		if (vec[i] < vec[supp_elem]) {
-			swap(vec[i], vec[j]);
-			++j;
-		}
-	}
-	swap(vec[j], vec[supp_elem]);
-	return j;
+    do {
+        while (vec[i] < middle) {
+            i++;
+            statistics.comparison_count++;
+        }
+        while (vec[j] > middle) {
+            j--;
+            statistics.comparison_count++;
+        }
+
+        if (i <= j) {
+            swap(vec[i], vec[j]);
+            i++;
+            j--;
+            statistics.copy_count += 3;
+        }
+    } while (i <= j);
+
+    if (j > start) {
+        stats left_statistics = QuickSort(vec, start, j);
+        statistics.comparison_count += left_statistics.comparison_count;
+        statistics.copy_count += left_statistics.copy_count;
+    }
+    if (i < end) {
+        stats right_statistics = QuickSort(vec, i, end);
+        statistics.comparison_count += right_statistics.comparison_count;
+        statistics.copy_count += right_statistics.copy_count;
+    }
+
+    return statistics;
 }
 
-void Quicksort(vector<int>& vec, int start, int end) {
-
-	if (start < end) {
-		int p = Partition(vec, start, end);
-		Quicksort(vec, start, p - 1);
-		Quicksort(vec, p + 1, end);
-	}
-
+stats& QuickSort(vector<int>& vec) {
+    return QuickSort(vec, 0, vec.size() - 1);
 }
 
 void PrintVector(vector<int> vec) {
@@ -60,15 +78,26 @@ void PrintVector(vector<int> vec) {
 }
 
 int main() {
-	vector<int> v = { 1 , 10 , 11 , 9 , 14 , 3 , 2 , 20 , 19 };
+	vector<int> v1 = { 1 , 10 , 11 , 9 , 14 , 3 , 2 , 20 , 19 };
+    vector<int> v2 = { 11 , 10 , 11 , 9 , 14 , 3 , 2 , 20 , 19 };
 
 	cout << "Vector Before Sorting: " << endl;
-	PrintVector(v);
+	PrintVector(v1);
 
-	stats statistics = BubbleSort(v);
+	stats statistics1 = BubbleSort(v1);
 
 	cout << "Vector After Sorting: " << endl;
-	PrintVector(v);
-	std::cout << "Comparison Count: " << statistics.comparison_count << std::endl;
-	std::cout << "Copy Count: " << statistics.copy_count << std::endl;
+	PrintVector(v1);
+	cout << "Comparison Count: " << statistics1.comparison_count << endl;
+	cout << "Copy Count: " << statistics1.copy_count << endl;
+
+    cout << "Vector Before Sorting: " << endl;
+    PrintVector(v2);
+
+    stats statistics2 = QuickSort(v2);
+
+    cout << "Vector After Sorting: " << endl;
+    PrintVector(v2);
+    cout << "Comparison Count: " << statistics2.comparison_count << endl;
+    cout << "Copy Count: " << statistics2.copy_count << endl;
 }
