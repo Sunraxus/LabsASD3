@@ -137,6 +137,34 @@ stats& HeapSort(vector<T>& vec) {
 }
 
 template <typename T>
+vector<T> RandomVec(size_t size) {
+    vector<T> vec(size);
+    srand(static_cast<unsigned int>(time(0)));
+    for (size_t i = 0; i < size; ++i) {
+        vec[i] = rand();
+    }
+    return vec;
+}
+
+template <typename T>
+vector<T> SortedVec(size_t size) {
+    vector<T> vec(size);
+    for (size_t i = 0; i < size; ++i) {
+        vec[i] = i;
+    }
+    return vec;
+}
+
+template <typename T>
+vector<T> ReverseSortedVec(size_t size) {
+    vector<T> vec(size);
+    for (size_t i = 0; i < size; ++i) {
+        vec[i] = size - i;
+    }
+    return vec;
+}
+
+template <typename T>
 void PrintVector(vector<T> vec) {
 	for (int i = 0; i < vec.size(); ++i)
 		cout << vec[i] << " ";
