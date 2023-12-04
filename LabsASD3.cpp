@@ -17,6 +17,23 @@ void custom_swap(T& a, T& b) {
     b = temp;
 }
 
+class MyClass {
+private:
+    int value;
+public:
+    MyClass() :value(0) {};
+    MyClass(const int value) :value(value) {};
+    int get_value() const {
+        return this->value;
+    }
+    bool operator>(const MyClass& rhs) {
+        return this->value > rhs.value;
+    }
+    bool operator<(const MyClass& rhs) {
+        return !(*this > rhs);
+    }
+};
+
 template<typename T>
 stats& BubbleSort(vector<T>& vec) {
 	stats statistics;
@@ -32,12 +49,13 @@ stats& BubbleSort(vector<T>& vec) {
 	return statistics;
 }
 
-stats& QuickSort(vector<int>& vec, int start, int end) {
+template <typename T>
+stats& QuickSort(vector<T>& vec, int start, int end) {
     stats statistics;
 
     int i = start;
     int j = end;
-    int middle = vec[(start + end) / 2];
+    T middle = vec[(start + end) / 2];
 
     do {
         while (vec[i] < middle) {
@@ -71,24 +89,30 @@ stats& QuickSort(vector<int>& vec, int start, int end) {
     return statistics;
 }
 
-stats& QuickSort(vector<int>& vec) {
+template <typename T>
+stats& QuickSort(vector<T>& vec) {
     return QuickSort(vec, 0, vec.size() - 1);
 }
 
-void Heapify(vector<int>& vec, int size, int i, stats& statistics) {
+template <typename T>
+void Heapify(vector<T>& vec, int size, int i, stats& statistics) {
     int max = i; 
     int left = 2 * i + 1;
     int right = 2 * i + 2;
-    if (left < size && vec[left] > vec[max]) {
-        max = left;
-        statistics.comparison_count++;
-        statistics.copy_count++;
+    if (left < size) {
+        statistics.comparison_count ++;
+        if (vec[left] > vec[max]) {
+            max = left;
+        }
     }
-    if (right < size && vec[right] > vec[max]) {
-        max = right;
-        statistics.comparison_count++;
-        statistics.copy_count++;
+
+    if (right < size) {
+        statistics.comparison_count ++;
+        if (vec[right] > vec[max]) {
+            max = right;
+        }
     }
+
     if (max != i) {
         custom_swap(vec[i], vec[max]);
         statistics.copy_count += 3;
@@ -96,7 +120,8 @@ void Heapify(vector<int>& vec, int size, int i, stats& statistics) {
     }
 }
 
-stats& HeapSort(vector<int>& vec) {
+template <typename T>
+stats& HeapSort(vector<T>& vec) {
     stats statistics;
     int size = vec.size();
     for (int i = size / 2 - 1; i >= 0; i--) {
@@ -119,10 +144,10 @@ void PrintVector(vector<T> vec) {
 }
 
 int main() {
-    vector<string> v1 = { "d","f", "c" , "b", "a", "r"};
-    vector<int> v2 = { 11 , 10 , 11 , 9 , 14 , 3 , 2 , 20 , 19 };
-    vector<int> v3 = { 1 , 10 , 11 , 9 , 14 , 3 , 2 , 20 , 19 };
-
+    vector<string> v1 = { "d", "f", "c" , "b", "a", "r"};
+    vector<string> v2 = { "d", "f", "c" , "b", "a", "r" };
+    vector<string> v3 = { "d", "f", "c" , "b", "a", "r" };
+    //1 , 10 , 11 , 9 , 14 , 3 , 2 , 20 , 19
 	cout << "Vector Before Sorting: " << endl;
 	PrintVector(v1);
 
@@ -150,4 +175,18 @@ int main() {
     PrintVector(v3);
     cout << "Comparison Count: " << statistics3.comparison_count << endl;
     cout << "Copy Count: " << statistics3.copy_count << endl;
+
+    vector<MyClass> v4;
+    v4.push_back(MyClass(5));
+    v4.push_back(MyClass(2));
+    v4.push_back(MyClass(8));
+    cout << "Vector Before Sorting: " << endl;
+    for (const auto& obj : v4) {
+        std::cout << obj.get_value() << " ";
+    }
+    stats statistics4 = BubbleSort(v4);
+    cout << endl;
+    for (const auto& obj : v4) {
+        std::cout << obj.get_value() << " ";
+    }
 }
