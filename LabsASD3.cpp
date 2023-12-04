@@ -2,6 +2,7 @@
 #include<vector>
 #include <cstdlib> 
 #include <stdexcept>
+#include <ctime>
 
 using namespace std;
 
@@ -161,7 +162,7 @@ vector<T> ReverseSortedVec(size_t size) {
     for (size_t i = 0; i < size; ++i) {
         vec[i] = size - i;
     }
-    return vec;
+    return vec; 
 }
 
 template <typename T>
@@ -172,49 +173,147 @@ void PrintVector(vector<T> vec) {
 }
 
 int main() {
-    vector<string> v1 = { "d", "f", "c" , "b", "a", "r"};
-    vector<string> v2 = { "d", "f", "c" , "b", "a", "r" };
-    vector<string> v3 = { "d", "f", "c" , "b", "a", "r" };
-    //1 , 10 , 11 , 9 , 14 , 3 , 2 , 20 , 19
-	cout << "Vector Before Sorting: " << endl;
-	PrintVector(v1);
+    const int num_vectors = 100;
+    const vector<size_t> vector_lengths = { 1000, 2000, 3000, 4000, 5000,6000, 7000, 8000, 9000, 10000, 25000, 50000, 100000 };
 
-	stats statistics1 = BubbleSort(v1);
+    for (size_t length : vector_lengths) {
+        stats bubble_random_stats_sum{ 0, 0 };
+        stats quick_random_stats_sum{ 0, 0 };
+        stats heap_random_stats_sum{ 0, 0 };
 
-	cout << "Vector After Sorting: " << endl;
-	PrintVector(v1);
-	cout << "Comparison Count: " << statistics1.comparison_count << endl;
-	cout << "Copy Count: " << statistics1.copy_count << endl;
+        stats bubble_sorted_stats_sum{ 0, 0 };
+        stats quick_sorted_stats_sum{ 0, 0 };
+        stats heap_sorted_stats_sum{ 0, 0 };
 
-    cout << "Vector Before Sorting: " << endl;
-    PrintVector(v2);
+        stats bubble_reverse_sorted_stats_sum{ 0, 0 };
+        stats quick_reverse_sorted_stats_sum{ 0, 0 };
+        stats heap_reverse_sorted_stats_sum{ 0, 0 };
 
-    stats statistics2 = QuickSort(v2);
+        for (int i = 0; i < num_vectors; ++i) {
+            vector<int> random_vector = RandomVec<int>(length);
 
-    cout << "Vector After Sorting: " << endl;
-    PrintVector(v2);
-    cout << "Comparison Count: " << statistics2.comparison_count << endl;
-    cout << "Copy Count: " << statistics2.copy_count << endl;
+            vector<int> bubble_random_vector = random_vector;
+            bubble_random_stats_sum.comparison_count += BubbleSort(bubble_random_vector).comparison_count;
+            bubble_random_stats_sum.copy_count += BubbleSort(bubble_random_vector).copy_count;
 
-    cout << "Vector Before Sorting: " << endl;
-    PrintVector(v3);
-    stats statistics3 = HeapSort(v3);
-    cout << "Vector After Sorting: " << endl;
-    PrintVector(v3);
-    cout << "Comparison Count: " << statistics3.comparison_count << endl;
-    cout << "Copy Count: " << statistics3.copy_count << endl;
+            vector<int> quick_random_vector = random_vector;
+            quick_random_stats_sum.comparison_count += QuickSort(quick_random_vector).comparison_count;
+            quick_random_stats_sum.copy_count += QuickSort(quick_random_vector).copy_count;
 
-    vector<MyClass> v4;
-    v4.push_back(MyClass(5));
-    v4.push_back(MyClass(2));
-    v4.push_back(MyClass(8));
-    cout << "Vector Before Sorting: " << endl;
-    for (const auto& obj : v4) {
-        std::cout << obj.get_value() << " ";
+            vector<int> heap_random_vector = random_vector;
+            heap_random_stats_sum.comparison_count += HeapSort(heap_random_vector).comparison_count;
+            heap_random_stats_sum.copy_count += HeapSort(heap_random_vector).copy_count;
+
+            vector<int> sorted_vector = SortedVec<int>(length);
+
+            vector<int> bubble_sorted_vector = sorted_vector;
+            bubble_sorted_stats_sum.comparison_count += BubbleSort(bubble_sorted_vector).comparison_count;
+            bubble_sorted_stats_sum.copy_count += BubbleSort(bubble_sorted_vector).copy_count;
+
+            vector<int> quick_sorted_vector = sorted_vector;
+            quick_sorted_stats_sum.comparison_count += QuickSort(quick_sorted_vector).comparison_count;
+            quick_sorted_stats_sum.copy_count += QuickSort(quick_sorted_vector).copy_count;
+
+            vector<int> heap_sorted_vector = sorted_vector;
+            heap_sorted_stats_sum.comparison_count += HeapSort(heap_sorted_vector).comparison_count;
+            heap_sorted_stats_sum.copy_count += HeapSort(heap_sorted_vector).copy_count;
+
+            vector<int> reverse_sorted_vector = ReverseSortedVec<int>(length);
+
+            vector<int> bubble_reverse_sorted_vector = reverse_sorted_vector;
+            bubble_reverse_sorted_stats_sum.comparison_count += BubbleSort(bubble_reverse_sorted_vector).comparison_count;
+            bubble_reverse_sorted_stats_sum.copy_count += BubbleSort(bubble_reverse_sorted_vector).copy_count;
+
+            vector<int> quick_reverse_sorted_vector = reverse_sorted_vector;
+            quick_reverse_sorted_stats_sum.comparison_count += QuickSort(quick_reverse_sorted_vector).comparison_count;
+            quick_reverse_sorted_stats_sum.copy_count += QuickSort(quick_reverse_sorted_vector).copy_count;
+
+            vector<int> heap_reverse_sorted_vector = reverse_sorted_vector;
+            heap_reverse_sorted_stats_sum.comparison_count += HeapSort(heap_reverse_sorted_vector).comparison_count;
+            heap_reverse_sorted_stats_sum.copy_count += HeapSort(heap_reverse_sorted_vector).copy_count;
+        }
+
+        stats bubble_random_average_stats{
+            bubble_random_stats_sum.comparison_count / num_vectors,
+            bubble_random_stats_sum.copy_count / num_vectors
+        };
+
+        stats quick_random_average_stats{
+            quick_random_stats_sum.comparison_count / num_vectors,
+            quick_random_stats_sum.copy_count / num_vectors
+        };
+
+        stats heap_random_average_stats{
+            heap_random_stats_sum.comparison_count / num_vectors,
+            heap_random_stats_sum.copy_count / num_vectors
+        };
+
+        stats bubble_sorted_average_stats{
+            bubble_sorted_stats_sum.comparison_count / num_vectors,
+            bubble_sorted_stats_sum.copy_count / num_vectors
+        };
+
+        stats quick_sorted_average_stats{
+            quick_sorted_stats_sum.comparison_count / num_vectors,
+            quick_sorted_stats_sum.copy_count / num_vectors
+        };
+
+        stats heap_sorted_average_stats{
+            heap_sorted_stats_sum.comparison_count / num_vectors,
+            heap_sorted_stats_sum.copy_count / num_vectors
+        };
+
+        stats bubble_reverse_sorted_average_stats{
+            bubble_reverse_sorted_stats_sum.comparison_count / num_vectors,
+            bubble_reverse_sorted_stats_sum.copy_count / num_vectors
+        };
+
+        stats quick_reverse_sorted_average_stats{
+            quick_reverse_sorted_stats_sum.comparison_count / num_vectors,
+            quick_reverse_sorted_stats_sum.copy_count / num_vectors
+        };
+
+        stats heap_reverse_sorted_average_stats{
+            heap_reverse_sorted_stats_sum.comparison_count / num_vectors,
+            heap_reverse_sorted_stats_sum.copy_count / num_vectors
+        };
+
+        cout << "Vector Length: " << length << "\n";
+        cout << "Random Vectors - Bubble Sort Average Stats:\n";
+        cout << "   Comparisons: " << bubble_random_average_stats.comparison_count << "\n";
+        cout << "   Copies: " << bubble_random_average_stats.copy_count << "\n\n";
+
+        cout << "Random Vectors - Quick Sort Average Stats:\n";
+        cout << "   Comparisons: " << quick_random_average_stats.comparison_count << "\n";
+        cout << "   Copies: " << quick_random_average_stats.copy_count << "\n\n";
+
+        cout << "Random Vectors - Heap Sort Average Stats:\n";
+        cout << "   Comparisons: " << heap_random_average_stats.comparison_count << "\n";
+        cout << "   Copies: " << heap_random_average_stats.copy_count << "\n\n";
+
+        cout << "Sorted Vectors - Bubble Sort Average Stats:\n";
+        cout << "   Comparisons: " << bubble_sorted_average_stats.comparison_count << "\n";
+        cout << "   Copies: " << bubble_sorted_average_stats.copy_count << "\n\n";
+
+        cout << "Sorted Vectors - Quick Sort Average Stats:\n";
+        cout << "   Comparisons: " << quick_sorted_average_stats.comparison_count << "\n";
+        cout << "   Copies: " << quick_sorted_average_stats.copy_count << "\n\n";
+
+        cout << "Sorted Vectors - Heap Sort Average Stats:\n";
+        cout << "   Comparisons: " << heap_sorted_average_stats.comparison_count << "\n";
+        cout << "   Copies: " << heap_sorted_average_stats.copy_count << "\n\n";
+        cout << "Reverse Sorted Vectors - Bubble Sort Average Stats:\n";
+        cout << "   Comparisons: " << bubble_reverse_sorted_average_stats.comparison_count << "\n";
+        cout << "   Copies: " << bubble_reverse_sorted_average_stats.copy_count << "\n\n";
+
+        cout << "Reverse Sorted Vectors - Quick Sort Average Stats:\n";
+        cout << "   Comparisons: " << quick_reverse_sorted_average_stats.comparison_count << "\n";
+        cout << "   Copies: " << quick_reverse_sorted_average_stats.copy_count << "\n\n";
+
+        cout << "Reverse Sorted Vectors - Heap Sort Average Stats:\n";
+        cout << "   Comparisons: " << heap_reverse_sorted_average_stats.comparison_count << "\n";
+        cout << "   Copies: " << heap_reverse_sorted_average_stats.copy_count << "\n\n";
     }
-    stats statistics4 = BubbleSort(v4);
-    cout << endl;
-    for (const auto& obj : v4) {
-        std::cout << obj.get_value() << " ";
-    }
+                                                                                                                                                                                                                                        
+    return 0;
 }
