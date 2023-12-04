@@ -50,7 +50,7 @@ stats& BubbleSort(vector<T>& vec) {
 }
 
 template <typename T>
-stats& QuickSort(vector<T>& vec, int start, int end) {
+stats& QuickSortSeparation(vector<T>& vec, int start, int end) {
     stats statistics;
 
     int i = start;
@@ -76,12 +76,12 @@ stats& QuickSort(vector<T>& vec, int start, int end) {
     } while (i <= j);
 
     if (j > start) {
-        stats left_statistics = QuickSort(vec, start, j);
+        stats left_statistics = QuickSortSeparation(vec, start, j);
         statistics.comparison_count += left_statistics.comparison_count;
         statistics.copy_count += left_statistics.copy_count;
     }
     if (i < end) {
-        stats right_statistics = QuickSort(vec, i, end);
+        stats right_statistics = QuickSortSeparation(vec, i, end);
         statistics.comparison_count += right_statistics.comparison_count;
         statistics.copy_count += right_statistics.copy_count;
     }
@@ -91,7 +91,7 @@ stats& QuickSort(vector<T>& vec, int start, int end) {
 
 template <typename T>
 stats& QuickSort(vector<T>& vec) {
-    return QuickSort(vec, 0, vec.size() - 1);
+    return QuickSortSeparation(vec, 0, vec.size() - 1);
 }
 
 template <typename T>
